@@ -1,2 +1,2 @@
-# gsgo
-gsgo is a high performance game server framework
+## gsgo
+gsgo is a high-performance game server framework
