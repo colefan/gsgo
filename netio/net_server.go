@@ -35,11 +35,11 @@ func (s *NetServer) Start() error {
 	return nil
 }
 
-func (s *NetServer) SetPackDispatcher(dispatcher *PackDispatcher) {
+func (s *NetServer) SetPackDispatcher(dispatcher PackDispatcher) {
 
 }
 
-func (s *NetServer) GetPackDispatcher() *PackDispatcher {
+func (s *NetServer) GetPackDispatcher() PackDispatcher {
 
 }
 

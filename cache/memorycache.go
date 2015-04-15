@@ -21,10 +21,11 @@ type MemoryItem struct {
 
 //缓存
 type MemoryCache struct {
-	lock  sync.RWMutex           //读写锁，读写要分离
-	items map[string]*MemoryItem //缓存存储对象
-	Every int                    //每隔多少时间进行一次缓存清理
-	dur   time.Duration          //每隔多少时间
+	lock    sync.RWMutex           //读写锁，读写要分离
+	items   map[string]*MemoryItem //缓存存储对象
+	Every   int                    //每隔多少时间进行一次缓存清理
+	dur     time.Duration          //每隔多少时间
+	initCap int                    //初始化大小
 }
 
 func NewMemoryCache() *MemoryCache {
@@ -84,7 +85,7 @@ func (c *MemoryCache) ClearAll() error {
 	return nil
 }
 
-//config:`{"interval":60,}`
+//config:`{"interval":60,"cap":1024}`
 func (c *MemoryCache) StartAndGC(config string) error {
 	var cf = make(map[string]int)
 	json.Unmarshal([]byte(config), &cf)
@@ -97,6 +98,12 @@ func (c *MemoryCache) StartAndGC(config string) error {
 		return err
 	}
 	c.dur = dur
+	if _, ok := cf["cap"]; ok {
+		if len(c.items) == 0 {
+			c.initCap = cf["cap"]
+			c.items = make(map[string]*MemoryItem, c.initCap)
+		}
+	}
 	go c.gc()
 	return nil
 }
