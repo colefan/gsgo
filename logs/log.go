@@ -192,3 +192,9 @@ func (this *Logger4g) Error(format string, v ...interface{}) {
 	msg := fmt.Sprintf(format, v...)
 	this.writeMsg(LevelError, msg)
 }
+
+var DefaultLogger *Logger4g = NewLogger("default", 100)
+
+func init() {
+	DefaultLogger.SetAppender("console", `{"level":0}`)
+}
