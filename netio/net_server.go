@@ -11,7 +11,7 @@ type ServerSocket interface {
 	Start(address string)
 	Close()
 	serve(conn net.Conn)
-	handshake()
+	handshake(conn *Connection)
 }
 
 type Server struct {
@@ -21,6 +21,10 @@ type Server struct {
 	status       int
 	dispatcher   PackDispatcher //消息分发器
 	parser       PackParser     //消息解析器
+}
+
+func NewServer() *Server {
+	return nil
 }
 
 func (s *Server) Init(config string) error {
