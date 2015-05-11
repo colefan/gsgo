@@ -1,6 +1,7 @@
 package protocol_login
 
 import (
+	"fmt"
 	"github.com/colefan/gsgo/netio/iobuffer"
 	"github.com/colefan/gsgo/netio/packet"
 )
@@ -39,7 +40,9 @@ func (this *Login_Req) DecodePacket() bool {
 		return true
 	}
 	packet.DecoderReadValue(this.Packet, &this.UserName)
+	fmt.Println("UserName = ", this.UserName)
 	packet.DecoderReadValue(this.Packet, &this.PWD)
+	fmt.Println("PWD =", this.PWD)
 	packet.DecoderReadEntity(this.Packet, &this.e)
 
 	arrLen := packet.DecoderReadArrayLength(this.Packet)
@@ -53,9 +56,6 @@ func (this *Login_Req) DecodePacket() bool {
 }
 
 func (this *Login_Req) EncodePacket(nLen int) *iobuffer.OutBuffer {
-	if nLen < 0 {
-		nLen = 256
-	}
 	buf := iobuffer.NewOutBuffer(nLen)
 	buf = this.Packet.Header.Encode(buf)
 	buf.PutRawValue(this.UserName)
@@ -67,5 +67,8 @@ func (this *Login_Req) EncodePacket(nLen int) *iobuffer.OutBuffer {
 			buf = tmp.EncodeEntity(buf)
 		}
 	}
+	nPackLen := buf.GetLen() - packet.PACKET_PROXY_HEADER_LEN
+	buf.SetUint16(uint16(nPackLen), 0)
+
 	return buf
 }

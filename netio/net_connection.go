@@ -2,10 +2,16 @@ package netio
 
 import (
 	"github.com/colefan/gsgo/logs"
+	"github.com/colefan/gsgo/netio/iobuffer"
 	"io"
 	"net"
 	"sync"
 )
+
+type SessionHandlerInf interface {
+	GetPackParser() PackParser
+	GetPackDispatcher() PackDispatcher
+}
 
 //客户端连接接口
 type ConnInf interface {
@@ -18,23 +24,23 @@ type ConnInf interface {
 }
 
 type Connection struct {
-	c              net.Conn //物理连接
-	s              *Server  //所属服务器
-	handshaked     bool     //握手是否完成
-	handshakecount int      //握手次数
+	c              net.Conn          //物理连接
+	s              SessionHandlerInf //所属服务器,或客户端
+	handshaked     bool              //握手是否完成
+	handshakecount int               //握手次数
 	address        string
-	readBuff       *IoBuffer //读取缓存区
-	writeBuff      *IoBuffer //写入缓冲区
+	readBuff       *iobuffer.InBuffer //读取缓存区
+	writeBuff      *iobuffer.InBuffer //写入缓冲区
 	writeMux       sync.Mutex
 	status         int
 }
 
-func NewConnection(c net.Conn, s *Server) *Connection {
+func NewConnection(c net.Conn, s SessionHandlerInf) *Connection {
 	return &Connection{c: c,
 		s:         s,
 		status:    SESSION_STATUS_INIT,
-		readBuff:  &IoBuffer{defaultSize: SIZE_1_K, maxSize: SIZE_64_K},
-		writeBuff: &IoBuffer{defaultSize: SIZE_1_K, maxSize: SIZE_64_K}}
+		readBuff:  iobuffer.NewInBuffer(iobuffer.SIZE_1_K, iobuffer.SIZE_64_K),
+		writeBuff: iobuffer.NewInBuffer(iobuffer.SIZE_1_K, iobuffer.SIZE_1_M)}
 }
 func (this *Connection) Start() {
 	//read first files

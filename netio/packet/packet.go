@@ -11,6 +11,7 @@ package packet
 
 import (
 	"encoding/binary"
+	"fmt"
 	"github.com/colefan/gsgo/netio/iobuffer"
 )
 
@@ -72,7 +73,7 @@ func (h *Header) Decode(data []byte) (bool, []byte) {
 	h.Version = uint8(data[0])
 	h.ClientSrc = uint8(data[1])
 	data = data[2:]
-	return false, data
+	return true, data
 }
 
 func (h *Header) Encode(writeBuf *iobuffer.OutBuffer) *iobuffer.OutBuffer {
@@ -100,14 +101,21 @@ func Packing(data []byte) *Packet {
 	if len(data) < PACKET_PROXY_HEADER_LEN {
 		return nil
 	}
+	fmt.Println("packing data = ", data)
 	pack := &Packet{RawData: data, PackDecoded: false}
 	b := false
 	b, pack.RawData = pack.Header.Decode(data)
 	if !b {
+		fmt.Println("b=>", b)
 		return nil
 	} else {
 		return pack
 	}
+}
+
+func NewEmptyPacket() *Packet {
+	pack := &Packet{PackDecoded: false}
+	return pack
 }
 
 func (this *Packet) IsDecoded() bool {
@@ -141,8 +149,10 @@ func DecoderReadValue(this *Packet, v interface{}) bool {
 	case *string:
 		strLen := binary.BigEndian.Uint16(this.RawData)
 		this.RawData = this.RawData[2:]
-		if strLen > 0 && len(this.RawData) >= int(strLen) {
+		//	fmt.Println("strLen=>", int(strLen), "data len =>", len(this.RawData))
+		if int(strLen) > 0 && len(this.RawData) >= int(strLen) {
 			*v.(*string) = string(this.RawData[0:strLen])
+			this.RawData = this.RawData[int(strLen):]
 		} else {
 			panic("not enough bytes to read for string")
 			return false

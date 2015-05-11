@@ -2,11 +2,12 @@ package netio
 
 import (
 	"encoding/binary"
+	"github.com/colefan/gsgo/netio/iobuffer"
 	"github.com/colefan/gsgo/netio/packet"
 )
 
 type PackParser interface {
-	ParseMsg(readBuf []byte, n int, iobuff *IoBuffer) []byte
+	ParseMsg(readBuf []byte, n int, iobuff *iobuffer.InBuffer) []byte
 }
 
 type DefaultParser struct {
@@ -16,7 +17,7 @@ func NewDefaultParser() *DefaultParser {
 	return &DefaultParser{}
 }
 
-func (p *DefaultParser) ParseMsg(readBuf []byte, n int, iobuff *IoBuffer) []byte {
+func (p *DefaultParser) ParseMsg(readBuf []byte, n int, iobuff *iobuffer.InBuffer) []byte {
 	if len(readBuf) >= n && n > 0 {
 		iobuff.AppendData(readBuf[0:n])
 		if len(iobuff.Buff) >= 2 {

@@ -1,12 +1,14 @@
 package netio
 
 const (
+	//服务器状态 默认状态
+	SERVER_STATUS_DEFAULT int = 0
 	//服务器状态 初始化
-	SERVER_STATUS_INIT int = 0
+	SERVER_STATUS_INITED int = 1
 	//服务器状态 侦听状态
-	SERVER_STATUS_LISTENING int = 1
+	SERVER_STATUS_LISTENING int = 2
 	//服务器状态 已经关闭
-	SERVER_STATUS_CLOSED int = 2
+	SERVER_STATUS_CLOSED int = 3
 )
 
 const (

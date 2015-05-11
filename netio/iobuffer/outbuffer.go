@@ -17,6 +17,14 @@ func NewOutBuffer(size int) *OutBuffer {
 	buf := &OutBuffer{data: make([]byte, size, size), nLen: 0, littleEndian: false}
 	return buf
 }
+
+func (b *OutBuffer) GetData() []byte {
+	return b.data[0:b.nLen]
+}
+
+func (b *OutBuffer) GetLen() int {
+	return b.nLen
+}
 func (b *OutBuffer) SetEndian(endian string) {
 	if endian == binary.LittleEndian.String() {
 		b.littleEndian = true
@@ -60,6 +68,19 @@ func (b *OutBuffer) PutUint16(v uint16) {
 	b.nLen++
 	b.data[b.nLen] = tmp[1]
 	b.nLen++
+}
+
+func (b *OutBuffer) SetUint16(v uint16, nPos int) {
+	tmp := make([]byte, 2)
+	if b.littleEndian {
+		binary.LittleEndian.PutUint16(tmp, v)
+	} else {
+		binary.BigEndian.PutUint16(tmp, v)
+	}
+	if b.nLen >= nPos+1 {
+		b.data[nPos] = tmp[0]
+		b.data[nPos+1] = tmp[1]
+	}
 }
 
 func (b *OutBuffer) PutUint32(v uint32) {

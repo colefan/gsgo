@@ -8,10 +8,10 @@ import (
 )
 
 type ServerSocket interface {
-	Start(address string)
-	Close()
+	Start() error
+	Close() error
 	serve(conn net.Conn)
-	handshake(conn *Connection)
+	//handshake(conn *Connection)
 }
 
 type Server struct {
@@ -28,16 +28,27 @@ func NewServer() *Server {
 }
 
 func (s *Server) Init(config string) error {
-	s.status = SERVER_STATUS_INIT
+	s.status = SERVER_STATUS_INITED
 	if len(config) <= 0 {
 		return fmt.Errorf("netio.Server.Init error,config is empty")
 	}
 	return json.Unmarshal([]byte(config), s)
 }
 
-func (s *Server) Start() error {
+func (s *Server) SetListenAddress(address string) {
+	s.listenAdress = address
+}
 
-	//s.StartAndServe()
+func (s *Server) SetListenPort(port uint16) {
+	s.listenPort = port
+}
+
+func (s *Server) Start() error {
+	if s.status < SERVER_STATUS_INITED {
+		return fmt.Errorf("netio.server.start error, not inited.")
+	}
+
+	s.ServerSocket.Start()
 	return nil
 }
 
@@ -63,7 +74,9 @@ func (s *Server) Shutdown() error {
 }
 
 func NewTcpSocketServer() *Server {
-	return nil
+	s := &Server{}
+	s.ServerSocket = NewTcpServerSocket(s)
+	return s
 }
 
 func NewWebSocketServer() *Server {
