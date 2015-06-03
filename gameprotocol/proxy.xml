@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root type="Pack" gopackage="protocol_proxy" >
+<Pack className="NodeRegReq" cmdName="CMD_S_S_REG_REQ" cmdValue="0x7F01" comment="服务结点注册请求">
+	<Field name="NodeType" type="uint16" value="" comment="服务器节点类型：1-登录服；2-目录服；3-游戏逻辑服"/>
+	<Field name="IP" type="string" value=""/>
+	<Field name="Port" type="uint16" value=""/>	
+	<Field name="GameId" type="uint32" value="" comment="游戏ID,0为非游戏的服务器"/>	
+	<Field name="GameAreaId" type="uint32" value="" comment="区域ID，支持分区分服"/>	
+	<Field name="GameServerId" type="uint32" value="" comment="游戏服ID，同一游戏可以有多个游戏服，支持分区分服功能" />
+	<Field name="GameCode" type="string" value="" comment="游戏编码"/>
+	<Field name="GameServerName" type="string" value="" comment="游戏服名称"/>
+	<Field name="GameServerDesc" type="string" value="" comment="游戏服描述"/>
+</Pack>
+
+<Pack className="NodeRegResp" cmdName="CMD_S_S_REG_RESP" cmdValue="0x7F02" comment="服务结点注册返回">
+	<Field name="Code" type="uint16" value="0" comment="返回注册结果，默认为0"/>
+</Pack>
+
+</Root>

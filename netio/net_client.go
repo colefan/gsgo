@@ -7,6 +7,7 @@ import (
 type ClientSocket interface {
 	Connect() error
 	Close() error
+	Write(data []byte)
 }
 type Client struct {
 	ClientSocket
@@ -48,7 +49,7 @@ func (this *Client) Connect() error {
 	if len(this.serverAddress) == 0 && this.servePort == 0 {
 		return fmt.Errorf("client connect error,server info invalid")
 	}
-	if this.ClientSocket != nil {
+	if this.ClientSocket == nil {
 		return fmt.Errorf("clientsocket is nil")
 	}
 	return this.ClientSocket.Connect()
@@ -58,6 +59,13 @@ func (this *Client) Close() {
 	if this.ClientSocket != nil {
 		this.ClientSocket.Close()
 	}
+}
+
+func (this *Client) Write(data []byte) {
+	if this.ClientSocket != nil && len(data) > 0 {
+		this.ClientSocket.Write(data)
+	}
+
 }
 
 func NewTcpClient() *Client {

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 )
 
 func Print(v ...interface{}) {
@@ -28,6 +29,7 @@ func CheckInput() {
 		if command == "q" || command == "Q" {
 			break
 		}
+		time.Sleep(5 * time.Second)
 
 	}
 

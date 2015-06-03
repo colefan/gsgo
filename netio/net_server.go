@@ -5,13 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+
+	"github.com/colefan/gsgo/netio/qos"
 )
 
 type ServerSocket interface {
 	Start() error
 	Close() error
-	serve(conn net.Conn)
+	serve(id uint32, conn net.Conn)
 	//handshake(conn *Connection)
+
 }
 
 type Server struct {
@@ -21,6 +24,8 @@ type Server struct {
 	status       int
 	dispatcher   PackDispatcher //消息分发器
 	parser       PackParser     //消息解析器
+	ClientNum    int
+	qos          netqos.QosInf
 }
 
 func NewServer() *Server {
@@ -71,6 +76,15 @@ func (s *Server) GetPackParser() PackParser {
 func (s *Server) Shutdown() error {
 	s.Close()
 	return nil
+}
+
+func (s *Server) SetQos(qos netqos.QosInf) {
+	s.qos = qos
+}
+
+func (s *Server) GetQos() netqos.QosInf {
+
+	return s.qos
 }
 
 func NewTcpSocketServer() *Server {

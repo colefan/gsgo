@@ -12,6 +12,7 @@ package packet
 import (
 	"encoding/binary"
 	"fmt"
+
 	"github.com/colefan/gsgo/netio/iobuffer"
 )
 
@@ -46,8 +47,8 @@ type Header struct {
 	PackLen   uint16 //协议体的长度
 	CmdID     uint16 //协议号ID
 	ID        uint32 //用户ID
-	FSID      uint16 //发送端服务ID
-	TSID      uint16 //接受放服务ID
+	FSID      uint16 //
+	TSID      uint16 //接受方服务ID
 	ValidCode uint16 //校验码
 	Version   uint8  //协议版本号 0-255
 	ClientSrc uint8  //客户端来源
@@ -101,7 +102,7 @@ func Packing(data []byte) *Packet {
 	if len(data) < PACKET_PROXY_HEADER_LEN {
 		return nil
 	}
-	fmt.Println("packing data = ", data)
+	//fmt.Println("packing data = ", data)
 	pack := &Packet{RawData: data, PackDecoded: false}
 	b := false
 	b, pack.RawData = pack.Header.Decode(data)

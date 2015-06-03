@@ -1,6 +1,7 @@
 package netio
 
 import (
+	"fmt"
 	"net"
 	"strconv"
 )
@@ -21,6 +22,7 @@ func (this *TcpClientSocket) Connect() error {
 	if len(this.address) == 0 {
 		this.address = this.c.serverAddress + ":" + strconv.Itoa(int(this.c.servePort))
 	}
+	fmt.Println("dial tcp ", this.address)
 	conn, err := net.Dial("tcp", this.address)
 	if err != nil {
 		return err
@@ -36,7 +38,16 @@ func (this *TcpClientSocket) Connect() error {
 
 func (this *TcpClientSocket) Close() error {
 	if this.c.status != SESSION_STATUS_CLOSED {
-		this.c.Close()
+		this.conn.Close()
+		this.c.status = SESSION_STATUS_CLOSED
 	}
 	return nil
+}
+
+func (this *TcpClientSocket) Write(data []byte) {
+	if this.conn != nil {
+		this.conn.Write(data)
+	} else {
+		fmt.Println("client conn is empty")
+	}
 }

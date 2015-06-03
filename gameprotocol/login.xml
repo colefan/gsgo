@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root type="Pack" gopackage="protocol_login2" >
+<Entity className="UserInfo" comment="用户数据">
+	<Field name="USER_ID" type="uint32" value="0"/>
+	<Field name="Name" type="string" value=""/>	
+	<Field name="Pwd" type="string" value=""/>	
+</Entity>
+<Pack className="LoginReq2" cmdName="CMD_C_LOGIN_REQUEST" cmdValue="0x0001" comment="">
+	<Field name="id" type="uint8" value="0"/>
+	<Field name="account" type="string" value=""/>	
+	<Field name="account2" type="entityarray" value="uint8"/>	
+	<Field name="UserData" type="entity" value="UserInfo"/>
+	<Field name="UserLIst" type="entityarray" value="UserInfo"/>
+	
+</Pack>
+</Root>

@@ -1,9 +1,12 @@
 package protocol_login
 
 import (
-	"fmt"
 	"github.com/colefan/gsgo/netio/iobuffer"
 	"github.com/colefan/gsgo/netio/packet"
+)
+
+const (
+	CMD_LOGIN uint16 = 0x01
 )
 
 type Entity struct {
@@ -40,9 +43,9 @@ func (this *Login_Req) DecodePacket() bool {
 		return true
 	}
 	packet.DecoderReadValue(this.Packet, &this.UserName)
-	fmt.Println("UserName = ", this.UserName)
+
 	packet.DecoderReadValue(this.Packet, &this.PWD)
-	fmt.Println("PWD =", this.PWD)
+
 	packet.DecoderReadEntity(this.Packet, &this.e)
 
 	arrLen := packet.DecoderReadArrayLength(this.Packet)

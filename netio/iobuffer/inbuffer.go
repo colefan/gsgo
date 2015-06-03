@@ -36,9 +36,10 @@ func (this *InBuffer) CutPackData(packLen int) []byte {
 		return nil
 	}
 	defer this.reduceCaps()
+	//fmt.Println("cut pack data, packLen = ", packLen, "  raw buf = ", this.Buff)
 	if len(this.Buff) >= packLen {
-		tmp := make([]byte, packLen)
-		tmp = append(tmp, this.Buff[0:packLen]...)
+		tmp := this.Buff[0:packLen]
+		//tmp = append(tmp, this.Buff[0:packLen]...)
 		this.Buff = this.Buff[packLen:]
 		return tmp
 	} else {
