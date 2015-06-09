@@ -94,8 +94,9 @@ func (h *Header) Encode(writeBuf *iobuffer.OutBuffer) *iobuffer.OutBuffer {
 
 type Packet struct {
 	Header
-	RawData     []byte
-	PackDecoded bool
+	headeRawData []byte
+	RawData      []byte
+	PackDecoded  bool
 }
 
 func Packing(data []byte) *Packet {
@@ -104,6 +105,8 @@ func Packing(data []byte) *Packet {
 	}
 	//fmt.Println("packing data = ", data)
 	pack := &Packet{RawData: data, PackDecoded: false}
+	pack.headeRawData = make([]byte, 0, PACKET_PROXY_HEADER_LEN)
+	pack.headeRawData = append(pack.headeRawData, data[0:PACKET_PROXY_HEADER_LEN]...)
 	b := false
 	b, pack.RawData = pack.Header.Decode(data)
 	if !b {
@@ -131,6 +134,13 @@ func (this *Packet) DecodePacket() bool {
 //PACKET的编码方法需要被子类重写
 func (this *Packet) EncodePacket(nLen int) *iobuffer.OutBuffer {
 	return nil
+}
+
+func (this *Packet) GetClientFromRawData() []byte {
+	data := make([]byte, 0, this.Header.PackLen+PACKET_PROXY_HEADER_LEN)
+	data = append(data, this.headeRawData...)
+	data = append(data, this.RawData...)
+	return data
 }
 
 func DecoderReadValue(this *Packet, v interface{}) bool {

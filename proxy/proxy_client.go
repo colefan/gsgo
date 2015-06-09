@@ -14,6 +14,7 @@ type ProxyClient struct {
 	hsServerNode *ServerNode
 	gsServerNode *ServerNode
 	physicalLink netio.ConnInf //客户端物理连接
+	mutex        sync.RWMutex
 }
 
 func NewProxyClient() *ProxyClient {
@@ -74,11 +75,15 @@ func (c *ProxyClient) GetHsRoute() *ServerNode {
 
 //游戏服路由
 func (c *ProxyClient) SetGsRoute(node *ServerNode) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 	c.gsServerNode = node
 }
 
 //游戏服路由
 func (c *ProxyClient) GetGsRoute() *ServerNode {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
 	return c.gsServerNode
 }
 

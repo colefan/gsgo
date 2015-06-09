@@ -1,0 +1,8 @@
+package proxy
+
+//错误码
+const (
+	EC_LSROUTE_IS_NIL = 20001
+	EC_HSROUTE_IS_NIL = 20002
+	EC_GSROUTE_IS_NIL = 20003
+)

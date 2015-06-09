@@ -40,7 +40,7 @@ func (n *NodeService) SessionOpen(conn netio.ConnInf) {
 func (n *NodeService) SessionClose(conn netio.ConnInf) {
 	//TODO
 	if conn.GetBsStatus() == BS_STATUS_AUTHED {
-		NodeManager.UnRegNodeConnection(conn.GetConnID())
+		NodeManagerInst.UnRegNodeConnection(conn.GetConnID())
 	}
 	conn.SetBsStatus(BS_STATUS_CLOSED)
 }
@@ -53,7 +53,7 @@ func (n *NodeService) HandleMsg(cmdID uint16, pack *packet.Packet, conn netio.Co
 	switch conn.GetBsStatus() {
 	case 0, BS_STATUS_OPENED:
 		//需要先判断节点是已经通过了验证
-		if protocol_proxy.CMD_S_S_REG_REQ == cmdID {
+		if protocol_proxy.CMD_S_P_REG_REQ == cmdID {
 			node := NewServerNode()
 			var regReq protocol_proxy.NodeRegReq
 			regReq.Packet = pack
@@ -68,12 +68,10 @@ func (n *NodeService) HandleMsg(cmdID uint16, pack *packet.Packet, conn netio.Co
 				node.GameServerName = regReq.GameServerName
 				node.GameServerDesc = regReq.GameServerDesc
 				node.Ip = conn.GetRemoteIp()
-				nRetCode := NodeManager.RegNodeConnection(node)
+				nRetCode := NodeManagerInst.RegNodeConnection(node)
 				if 0 == nRetCode {
+					node.SetPhysicalLink(conn)
 					conn.SetBsStatus(BS_STATUS_AUTHED)
-					conn.BindObj(node)
-					//set connid;
-
 				} else {
 					ProxyLog.Info("server node register failed, ip = ", conn.GetRemoteIp(), " NodeType = ", node.NodeType, " IP = ", node.Ip, " errcode = ", nRetCode)
 				}
@@ -81,7 +79,7 @@ func (n *NodeService) HandleMsg(cmdID uint16, pack *packet.Packet, conn netio.Co
 				resp := protocol_proxy.NodeRegResp{}
 				resp.Packet = packet.NewEmptyPacket()
 				resp.Code = uint16(nRetCode)
-				resp.CmdID = protocol_proxy.CMD_S_S_REG_RESP
+				resp.CmdID = protocol_proxy.CMD_S_P_REG_RESP
 				buf := resp.EncodePacket(256)
 				conn.Write(buf.GetData())
 
@@ -96,7 +94,7 @@ func (n *NodeService) HandleMsg(cmdID uint16, pack *packet.Packet, conn netio.Co
 	//请进入转发模式
 	//fowardrule:::	TODO
 	default:
-		ProxyLog.Error("unknown server node status : ", conn.GetBsStatus())
+		ProxyLog.Error("unknown server               status : ", conn.GetBsStatus())
 	}
 
 }

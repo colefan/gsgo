@@ -82,6 +82,8 @@ func TestPacket(t *testing.T) {
 	list := make([]int32, 3)
 	putraw(len(list))
 
+	login
+
 	//fmt.Println("loginReq=>", loginList)
 
 }

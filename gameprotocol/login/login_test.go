@@ -2,8 +2,9 @@ package protocol_login
 
 import (
 	"fmt"
-	"github.com/colefan/gsgo/netio/packet"
 	"testing"
+
+	"github.com/colefan/gsgo/netio/packet"
 )
 
 func TestLoginMsg(t *testing.T) {
@@ -21,7 +22,9 @@ func TestLoginMsg(t *testing.T) {
 	buf := loginReq.EncodePacket(0)
 
 	fmt.Println("login=>", loginReq)
-	fmt.Println("buf =>", buf)
+	fmt.Println("buf =>", buf.GetData())
+	pack := packet.Packing(buf.GetData())
+	fmt.Println("cbuf=>", pack.GetClientFromRawData())
 
 	loginReq2 := &Login_Req{}
 	loginReq2.Packet = packet.Packing(buf.GetData())

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Root type="Pack" gopackage="protocol_proxy" >
-<Pack className="NodeRegReq" cmdName="CMD_S_S_REG_REQ" cmdValue="0x7F01" comment="服务结点注册请求">
+<Pack className="NodeRegReq" cmdName="CMD_S_P_REG_REQ" cmdValue="0x7F01" comment="服务结点注册请求">
 	<Field name="NodeType" type="uint16" value="" comment="服务器节点类型：1-登录服；2-目录服；3-游戏逻辑服"/>
 	<Field name="IP" type="string" value=""/>
 	<Field name="Port" type="uint16" value=""/>	
@@ -12,8 +12,29 @@
 	<Field name="GameServerDesc" type="string" value="" comment="游戏服描述"/>
 </Pack>
 
-<Pack className="NodeRegResp" cmdName="CMD_S_S_REG_RESP" cmdValue="0x7F02" comment="服务结点注册返回">
+<Pack className="NodeRegResp" cmdName="CMD_S_P_REG_RESP" cmdValue="0x7F02" comment="服务结点注册返回">
 	<Field name="Code" type="uint16" value="0" comment="返回注册结果，默认为0"/>
+</Pack>
+
+<Pack className="ProxyClientOfflineReq" cmdName="CMD_C_P_USER_OFFLINE_REQ" cmdValue="0x7F03" comment="客户端用户断线">
+	<Field name="UserID" type="uint32" value="0" comment="用户ID"/>
+</Pack>
+
+<Pack className="ProxyClientOfflineResp" cmdName="CMD_C_P_USER_OFFLINE_RESP" cmdValue="0x7F04" comment="客户端用户断线">
+	<Field name="UserID" type="uint32" value="0" comment="用户ID"/>
+</Pack>
+
+<Pack className="ProxyRouteReq" cmdName="CMD_C_P_PROXY_ROUTE_REQ" cmdValue="0x7F05" comment="代理路由请求，获取合适的代理地址">
+</Pack>
+<Pack className="ProxyRouteResp" cmdName="CMD_C_P_PROXY_ROUTE_RESP" cmdValue="0x7F06" comment="代理路由请求，获取合适的代理地址">
+	<Field name="Ip" type="string" value="" comment="可用IP" />
+	<Field name="Port" type="uint16" value="" comment="可用PORT" />
+	<Field name="ExtStrVal" type="string" value="" comment="扩展数据" />
+</Pack>
+
+<Pack className="ProxyErrorNt" cmdName="CMD_P_C_PROXY_ERROR_NT" cmdValue="0x7F07" comment="错误通知">
+	<Field name="ReqCmdID" type="uint16" value="" comment="请求命令号" />
+	<Field name="ErrCode" type="uint16" value="" comment="错误码" />
 </Pack>
 
 </Root>

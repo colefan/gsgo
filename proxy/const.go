@@ -7,9 +7,19 @@ const (
 )
 
 const (
-	NODE_TYPE_LS = 1 //登录服务器，主要处理用户登录的合法验证
-	NODE_TYPE_HS = 2 //目录服务器或者说是大厅服务器，主要提供游戏目录服务
-	NODE_TYPE_GS = 3 //游戏逻辑服务器
+	NODE_TYPE_LS    = 1     //登录服务器，主要处理用户登录的合法验证
+	LS_INDEX_MIN    = 10000 //最小索引
+	LS_INDEX_MAX    = 19999 //最大索引
+	LS_MAX_ONLINES  = 10000
+	NODE_TYPE_HS    = 2     //目录服务器或者说是大厅服务器，主要提供游戏目录服务
+	HS_INDEX_MIN    = 20000 //最小索引
+	HS_INDEX_MAX    = 29999 //最大索引
+	HS_MAX_ONLINES  = 10000
+	NODE_TYPE_GS    = 3     //游戏逻辑服务器
+	GS_INDEX_MIN    = 30000 //最小索引
+	GS_INDEX_MAX    = 39999 //最大索引
+	GS_MAX_ONLINES  = 5000
+	NODE_TYPE_PROXY = 99
 )
 
 const (
