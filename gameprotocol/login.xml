@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Root type="Pack" gopackage="protocol_login2" >
+<!-- 登录指令：0x0001-0x000F-->
+<Root type="Pack" gopackage="protocol_login" >
+<!--
 <Entity className="UserInfo" comment="用户数据">
 	<Field name="USER_ID" type="uint32" value="0"/>
 	<Field name="Name" type="string" value=""/>	
 	<Field name="Pwd" type="string" value=""/>	
 </Entity>
-<Pack className="LoginReq2" cmdName="CMD_C_LOGIN_REQUEST" cmdValue="0x0001" comment="">
-	<Field name="id" type="uint8" value="0"/>
-	<Field name="account" type="string" value=""/>	
-	<Field name="account2" type="entityarray" value="uint8"/>	
-	<Field name="UserData" type="entity" value="UserInfo"/>
-	<Field name="UserLIst" type="entityarray" value="UserInfo"/>
-	
+-->
+<!-- 登录第一次握手 -->
+<Pack className="LoginReq" cmdName="CMD_C_LOGIN_REQ" cmdValue="0x0001" comment="登录请求">
+	<Field name="Account" type="string" value="" comment="账户"/>	
+	<Field name="CAID" type="uint8" value="0" comment="登录区域ID，预留的扩展字段"/>
 </Pack>
+<Pack className="LoginResp" cmdName="CMD_C_LOGIN_RESP" cmdValue="0x0002" comment="登录请求响应">
+	<Field name="RandomCode" type="string" value="随机串" />	
+</Pack>
+<!-- 登录第二次握手 -->
+<Pack className="LoginValidReq" cmdName="CMD_C_LOGIN_VALID_REQ" cmdValue="0x0003" comment="登录校验请求">
+	<Field name="Account" type="string" value="" comment="帐号"/>
+	<Field name="ValidCode" type="string" value="" comment="验证码"/>	
+	<Field name="CRandCode" type="string" value="" comment="随机码"/>
+</Pack>
+
+<Pack className="LoginValidResp" cmdName="CMD_C_LOGIN_VALID_RESP" cmdValue="0x0004" comment="登录校验">
+	<Field name="UFID" type="uint8" value="" comment="用户来源ID"/>
+	<Field name="UserId" type="uint32" value="" comment="用户ID"/>
+	<Field name="ValidFlag" type="string" value="" comment="登录凭证"/>	
+	<Field name="NeedRecover" type="uint8" value="" comment="是否需要恢复现场"/>
+	<Field name="GameAreaId" type="uint8" value="" comment="游戏区域ID"/>
+	<Field name="GameId" type="uint32" value="" comment="游戏ID"/>
+	<Field name="GameServerId" type="uint32" value="" comment="游戏服ID"/>
+	<Field name="GameServerIp" type="string" value="" comment="游戏服IP"/>
+	<Field name="GameServerPort" type="uint16" value="" comment="游戏服端口"/>
+</Pack>
+
+
 </Root>

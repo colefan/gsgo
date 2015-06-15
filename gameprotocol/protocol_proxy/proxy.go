@@ -12,7 +12,6 @@ const (
 	CMD_C_P_USER_OFFLINE_RESP = 0x7F04
 	CMD_C_P_PROXY_ROUTE_REQ = 0x7F05
 	CMD_C_P_PROXY_ROUTE_RESP = 0x7F06
-	CMD_P_C_PROXY_ERROR_NT = 0x7F07
 )
 
 type NodeRegReq struct {
@@ -170,31 +169,6 @@ func (this *ProxyRouteResp) EncodePacket(nLen int) *iobuffer.OutBuffer {
 	buf.PutRawValue(this.Ip)
 	buf.PutRawValue(this.Port)
 	buf.PutRawValue(this.ExtStrVal)
-	nPackLen := buf.GetLen() - packet.PACKET_PROXY_HEADER_LEN
-	buf.SetUint16(uint16(nPackLen), 0)
-	return buf
-}
-type ProxyErrorNt struct {
-	*packet.Packet
-	ReqCmdID	uint16 //请求命令号
-	ErrCode	uint16 //错误码
-}
-
-func (this *ProxyErrorNt) DecodePacket() bool {
-	if this.IsDecoded() {
-		return true
-	}
-	packet.DecoderReadValue(this.Packet, &this.ReqCmdID)
-	packet.DecoderReadValue(this.Packet, &this.ErrCode)
-	this.PackDecoded = true
-	return true
-}
-
-func (this *ProxyErrorNt) EncodePacket(nLen int) *iobuffer.OutBuffer {
-	buf := iobuffer.NewOutBuffer(nLen)
-	buf = this.Packet.Header.Encode(buf)
-	buf.PutRawValue(this.ReqCmdID)
-	buf.PutRawValue(this.ErrCode)
 	nPackLen := buf.GetLen() - packet.PACKET_PROXY_HEADER_LEN
 	buf.SetUint16(uint16(nPackLen), 0)
 	return buf

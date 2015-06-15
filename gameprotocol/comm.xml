@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--公用指令：0x00D0--0x00FF-->
+<Root type="Pack" gopackage="protocol_comm" >
+
+<!-- 统一的错误指令 -->
+<Pack className="ServerErrorNt" cmdName="CMD_S_C_ERROR_NT" cmdValue="0x00D2" comment="错误通知">
+	<Field name="ReqCmdID" type="uint16" value="" comment="请求命令号" />
+	<Field name="ErrCode" type="uint16" value="" comment="错误码" />
+</Pack>
+
+<Pack className="VersionCheckReq" cmdName="CMD_C_S_VCHECK_REQ" cmdValue="0x00D3" comment="版本检查">
+	<Field name="NodeType" type="uint16" value="" comment="服务器类型" />
+	<Field name="GameID" type="uint32" value="" comment="游戏ID" />
+	<Field name="GameCode" type="string" value="" comment="游戏编码" />
+	<Field name="Version" type="string" value="" comment="游戏版本号" />
+</Pack>
+
+<Pack className="VersionCheckResp" cmdName="CMD_C_S_VCHECK_RESP" cmdValue="0x00D4" comment="版本检查">
+	<Field name="NodeType" type="uint16" value="" comment="服务器类型" />
+	<Field name="GameID" type="uint32" value="" comment="游戏ID" />
+	<Field name="GameCode" type="string" value="" comment="游戏编码" />
+	<Field name="Code" type="uint16" value="" comment="错误码" />
+</Pack>
+
+</Root>

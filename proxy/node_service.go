@@ -91,7 +91,19 @@ func (n *NodeService) HandleMsg(cmdID uint16, pack *packet.Packet, conn netio.Co
 			conn.Close()
 		}
 	case BS_STATUS_AUTHED:
-	//请进入转发模式
+		//请进入转发模式
+		if pack.FSID == NODE_TYPE_LS {
+			lsForwarderInst.FowardToClient(cmdID, pack, conn)
+
+		} else if pack.FSID == NODE_TYPE_HS {
+			hsForwarderInst.FowardToClient(cmdID, pack, conn)
+
+		} else if pack.FSID == NODE_TYPE_GS {
+			gsForwarderInst.FowardToClient(cmdID, pack, conn)
+
+		} else {
+			ProxyLog.Error("unknow server node type :", pack.FSID)
+		}
 	//fowardrule:::	TODO
 	default:
 		ProxyLog.Error("unknown server               status : ", conn.GetBsStatus())

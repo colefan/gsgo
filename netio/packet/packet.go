@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	PACKET_PROXY_HEADER_LEN = 16    //	代理协议的包头16个字节
+	PACKET_PROXY_HEADER_LEN = 18    //	代理协议的包头18个字节
 	PACKET_LIMIT_SIZE       = 65535 //一个包的最大大小，包含包头，实际大小需要减掉16
 )
 
@@ -52,11 +52,12 @@ type Header struct {
 	ValidCode uint16 //校验码
 	Version   uint8  //协议版本号 0-255
 	ClientSrc uint8  //客户端来源
+	ErrCode   uint16 //错误码，默认为0，标示正常
 }
 
 func (h *Header) Decode(data []byte) (bool, []byte) {
 	if len(data) < PACKET_PROXY_HEADER_LEN {
-		panic("not enough len for header,at least 16 bits")
+		panic("not enough len for header,at least 18 bits")
 		return false, nil
 	}
 	h.PackLen = binary.BigEndian.Uint16(data)
@@ -74,6 +75,8 @@ func (h *Header) Decode(data []byte) (bool, []byte) {
 	h.Version = uint8(data[0])
 	h.ClientSrc = uint8(data[1])
 	data = data[2:]
+	h.ErrCode = binary.BigEndian.Uint16(data)
+	data = data[2:]
 	return true, data
 }
 
@@ -89,6 +92,7 @@ func (h *Header) Encode(writeBuf *iobuffer.OutBuffer) *iobuffer.OutBuffer {
 	writeBuf.PutUint16(h.ValidCode)
 	writeBuf.PutUint8(h.Version)
 	writeBuf.PutUint8(h.ClientSrc)
+	writeBuf.PutUint16(h.ErrCode)
 	return writeBuf
 }
 
