@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"strconv"
 
 	"github.com/colefan/gsgo/netio/qos"
 )
@@ -48,9 +49,12 @@ func (s *Server) SetListenPort(port uint16) {
 	s.listenPort = port
 }
 
+func (s *Server) GetConfigJson() string {
+	return "`" + "{\"ip\":\"" + s.listenAdress + "\",\"port\":" + strconv.Itoa(int(s.listenPort)) + "}" + "`"
+}
 func (s *Server) Start() error {
 	if s.status < SERVER_STATUS_INITED {
-		return fmt.Errorf("netio.server.start error, not inited.")
+		panic("netio.server.start error, not inited.")
 	}
 
 	s.ServerSocket.Start()

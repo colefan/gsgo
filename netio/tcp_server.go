@@ -35,6 +35,8 @@ func (s *TcpServerSocket) Start() error {
 	s.listener, err = net.Listen("tcp", s.address)
 	if err != nil {
 		return fmt.Errorf("tcp listen address error " + s.address)
+	} else {
+		fmt.Println("tcp listen address: ", s.address)
 	}
 	for {
 		conn, err := s.listener.Accept()

@@ -68,11 +68,12 @@ type logMsg struct {
 
 //logger class
 type Logger4g struct {
-	lock    sync.Mutex
-	level   int
-	outputs map[string]LoggerOutputInf
-	msg     chan *logMsg
-	name    string
+	lock       sync.Mutex
+	level      int
+	outputs    map[string]LoggerOutputInf
+	msg        chan *logMsg
+	name       string
+	bGoRoutine bool
 }
 
 //创建一个新的logger
@@ -87,8 +88,15 @@ func NewLogger(name string, chanlen int) *Logger4g {
 	}
 	log1.msg = make(chan *logMsg, chanlen)
 	log1.name = name
-	go log1.startLogger()
+	if log1.bGoRoutine {
+		go log1.startLogger()
+	}
+
 	return log1
+}
+
+func (this *Logger4g) SetThreadable(bGoRoutine bool) {
+	this.bGoRoutine = bGoRoutine
 }
 
 func (this *Logger4g) startLogger() {
@@ -106,6 +114,15 @@ func (this *Logger4g) startLogger() {
 
 }
 
+func (this *Logger4g) flushLogger(msg *logMsg) {
+	for _, tmpOutput := range this.outputs {
+		err := tmpOutput.WriteMsg(msg.Level, msg.Msg)
+		if err != nil {
+			fmt.Println("Error unable to Write msg:", err)
+		}
+	}
+
+}
 func (this *Logger4g) SetAppender(appenderName string, config string) error {
 	this.lock.Lock()
 	defer this.lock.Unlock()
@@ -129,7 +146,12 @@ func (this *Logger4g) writeMsg(level int, msg string) {
 	}
 
 	tmpMsg := &logMsg{Level: level, Msg: msg}
-	this.msg <- tmpMsg
+	if this.bGoRoutine {
+		this.msg <- tmpMsg
+	} else {
+		this.flushLogger(tmpMsg)
+	}
+
 	return
 }
 

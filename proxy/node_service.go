@@ -20,12 +20,15 @@ func NewNodeService() *NodeService {
 }
 
 func (n *NodeService) InitService() error {
-	n.SetListenAddress(ProxyConf.ListenIp)
-	n.SetListenPort(uint16(ProxyConf.ListenPort))
+	n.SetListenAddress(ProxyConf.ForwardIp)
+	n.SetListenPort(uint16(ProxyConf.ForwardPort))
 	n.SetPackParser(netio.NewDefaultParser())
 	n.SetPackDispatcher(n)
-	n.GetPackDispatcher().AddPackEventListener("proxyserver", n)
+	n.GetPackDispatcher().AddPackEventListener("nodeserver", n)
+	n.Init(n.GetConfigJson())
+	go n.Start()
 	return nil
+
 }
 
 func (n *NodeService) SessionOpen(conn netio.ConnInf) {

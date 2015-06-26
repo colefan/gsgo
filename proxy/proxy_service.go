@@ -32,6 +32,13 @@ func NewProxyService() *ProxyService {
 }
 
 func (p *ProxyService) InitService() error {
+	p.SetListenAddress(ProxyConf.ListenIp)
+	p.SetListenPort(uint16(ProxyConf.ListenPort))
+	p.SetPackParser(netio.NewDefaultParser())
+	p.SetPackDispatcher(p)
+	p.GetPackDispatcher().AddPackEventListener("proxyserver", p)
+	p.Init(p.GetConfigJson())
+	go p.Start()
 	return nil
 }
 
