@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	. "github.com/colefan/gsgo/tools/packettool"
 	"github.com/colefan/gsgo/tools/utils"
 )
 
