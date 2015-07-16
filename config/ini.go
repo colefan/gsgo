@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -89,7 +90,7 @@ func (ini *IniConfig) parseFile(name string) (ConfigManager, error) {
 
 		if bytes.HasPrefix(line, sectionStartFlag) && bytes.HasSuffix(line, sectionEndFlag) {
 			//new section
-			section = strings.ToLower(string(line[1 : len(line)-1]))
+			section = string(line[1 : len(line)-1])
 			if comment.Len() > 0 {
 				cfg.sectionComment[section] = comment.String()
 				comment.Reset()
@@ -107,7 +108,7 @@ func (ini *IniConfig) parseFile(name string) (ConfigManager, error) {
 		keyValue := bytes.SplitN(line, bEqualFlag, 2)
 
 		key := string(bytes.TrimSpace(keyValue[0])) // key name case insensitive
-		key = strings.ToLower(key)
+		//key = strings.ToLower(key)
 		if len(keyValue) != 2 {
 			return nil, errors.New("read the content error: \"" + string(line) + "\", should key = val")
 		}
@@ -177,7 +178,7 @@ func (c *IniConfigManager) Float(key string) (float64, error) {
 	return strconv.ParseFloat(c.getdata(key), 64)
 }
 
-func (c *IniConfigManager) SaveConfigFile(filename string) error {
+func (c *IniConfigManager) SaveConfigFile(filename string, bsort bool) error {
 	if !c.changed {
 		return nil
 	}
@@ -187,7 +188,21 @@ func (c *IniConfigManager) SaveConfigFile(filename string) error {
 	}
 	defer f.Close()
 	buf := bytes.NewBuffer(nil)
-	for section, dt := range c.data {
+
+	keys := make([]string, 0, 32)
+
+	for key, _ := range c.data {
+		keys = append(keys, key)
+	}
+
+	if bsort {
+		sort.Strings(keys)
+	}
+
+	for _, secKey := range keys {
+		section := secKey
+		dt := c.data[section]
+		//section, dt := range c.data
 		// Write section comments.
 		if v, ok := c.sectionComment[section]; ok {
 			if _, err = buf.WriteString(string(bNotesFlag) + v + lineBreakFlag); err != nil {
@@ -202,7 +217,17 @@ func (c *IniConfigManager) SaveConfigFile(filename string) error {
 			}
 		}
 
-		for key, val := range dt {
+		tmpKeys := make([]string, 0, len(dt))
+		for k, _ := range dt {
+			tmpKeys = append(tmpKeys, k)
+		}
+
+		if bsort {
+			sort.Strings(tmpKeys)
+		}
+
+		for _, key := range tmpKeys {
+			val := dt[key]
 			if key != " " {
 				// Write key comments.
 				if v, ok := c.keyComment[key]; ok {
@@ -242,7 +267,7 @@ func (c *IniConfigManager) getdata(key string) string {
 
 	var (
 		section, k string
-		sectionKey []string = strings.Split(strings.ToLower(key), "::")
+		sectionKey []string = strings.Split(key, "::")
 	)
 	if len(sectionKey) >= 2 {
 		section = sectionKey[0]
@@ -252,7 +277,7 @@ func (c *IniConfigManager) getdata(key string) string {
 		k = sectionKey[0]
 	}
 	if v, ok := c.data[section]; ok {
-		if vv, ok := v[k]; ok {
+		if vv, ok2 := v[k]; ok2 {
 			return vv
 		}
 	}

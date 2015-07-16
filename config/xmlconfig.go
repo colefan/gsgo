@@ -3,6 +3,7 @@ package config
 import (
 	"bytes"
 	"encoding/xml"
+	"fmt"
 	"io/ioutil"
 	"sync"
 )
@@ -45,13 +46,15 @@ func (xmlconf *XmlConfig) parseFile(filename string) (ConfigManager, error) {
 
 	decoder := xml.NewDecoder(bytes.NewBuffer(xmlcontent))
 
-	for element, err = decoder.Token(); err == nil; element, err = decoder.Token() {
+	for element, err := decoder.Token(); err == nil; element, err = decoder.Token() {
 		switch eType := element.(type) {
 		case xml.StartElement:
+			fmt.Println(eType)
 		case xml.CharData:
 		case xml.EndElement:
 		case xml.Comment:
 		}
 	}
+	return nil, nil
 
 }

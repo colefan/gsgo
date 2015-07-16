@@ -14,7 +14,7 @@ type ConfigManager interface {
 	Int64(key string) (int64, error)
 	Bool(key string) (bool, error)
 	Float(key string) (float64, error)
-	SaveConfigFile(filename string) error
+	SaveConfigFile(filename string, bsort bool) error
 }
 
 type Config interface {
