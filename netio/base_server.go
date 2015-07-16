@@ -2,6 +2,7 @@ package netio
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/colefan/gsgo/netio/packet"
 )
@@ -12,6 +13,7 @@ type BaseServer struct {
 	DefaultPackDispatcher
 	bInited    bool
 	serverName string
+	mu         sync.RWMutex //读写锁
 }
 
 //初始化服务器
