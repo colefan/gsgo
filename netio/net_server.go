@@ -50,7 +50,8 @@ func (s *Server) SetListenPort(port uint16) {
 }
 
 func (s *Server) GetConfigJson() string {
-	return "`" + "{\"ip\":\"" + s.listenAdress + "\",\"port\":" + strconv.Itoa(int(s.listenPort)) + "}" + "`"
+	//return "`" + "{\"ip\":\"" + s.listenAdress + "\",\"port\":" + strconv.Itoa(int(s.listenPort)) + "}" + "`"
+	return "{\"ip\":\"" + s.listenAdress + "\",\"port\":" + strconv.Itoa(int(s.listenPort)) + "}"
 }
 func (s *Server) Start() error {
 	if s.status < SERVER_STATUS_INITED {

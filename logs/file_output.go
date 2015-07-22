@@ -60,7 +60,7 @@ type FileLogOutput struct {
 
 func NewFileLogOutput() LoggerOutputInf {
 	fileLog := &FileLogOutput{FileName: "",
-		CutMaxSize:         128,
+		CutMaxSize:         10240000,
 		Daily:              true,
 		DailyCutTimeFmt:    "00:00",
 		dailyCutTimeSecond: 0,
@@ -79,6 +79,7 @@ func (this *FileLogOutput) Init(config string) error {
 	if err != nil {
 		return err
 	}
+	this.CutMaxSize = this.CutMaxSize * 1024 * 1024
 	this.headLen = len(this.Prefix) + len("[T]2012-06-06 09:88:88 ")
 	return this.startLogger()
 }

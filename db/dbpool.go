@@ -45,6 +45,7 @@ func NewDefaultDbPool() DbPool {
 func (this *DefaultDbPool) InitPool(database string, dbtype string, connstr string, initConnsNum int) error {
 	this.lock.Lock()
 	defer this.lock.Unlock()
+	//	fmt.Println("connstr = ", connstr)
 
 	this.dbname = database
 	this.dbtype = dbtype
@@ -85,7 +86,7 @@ func (this *DefaultDbPool) createMysqlConnection() (Connection, error) {
 func (this *DefaultDbPool) GetConnection() Connection {
 	this.lock.Lock()
 	defer this.lock.Unlock()
-	fmt.Println("free len ,", len(this.freeConns))
+	//fmt.Println("free len ,", len(this.freeConns))
 	for _, tmp := range this.freeConns {
 
 		if false == tmp.IsUsed() {

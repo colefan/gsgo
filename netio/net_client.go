@@ -2,6 +2,7 @@ package netio
 
 import (
 	"fmt"
+	"time"
 )
 
 type ClientSocket interface {
@@ -19,6 +20,37 @@ type Client struct {
 	parser        PackParser
 	reConnCount   int
 	bReconnable   bool
+	reconnectchan chan bool
+}
+
+func (this *Client) StartReconnecting() {
+	if false == this.bReconnable {
+		return
+	}
+
+	go this.reconnecting()
+
+}
+
+func (this *Client) reconnecting() {
+
+	for b := <-this.reconnectchan; b; b = <-this.reconnectchan {
+		this.reConnCount++
+		fmt.Println("client is reconnecting....", this.reConnCount)
+		err := this.Connect()
+		if err != nil {
+			time.Sleep(time.Second * 5)
+		}
+	}
+
+}
+
+func (this *Client) Reconnectable() bool {
+	return this.bReconnable
+}
+
+func (this *Client) SetReconnectable(b bool) {
+	this.bReconnable = b
 }
 
 func (this *Client) SetServerAddress(address string) {

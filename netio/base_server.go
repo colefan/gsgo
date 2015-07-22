@@ -31,7 +31,6 @@ func (this *BaseServer) InitServer(servername string, ip string, port uint16) (e
 	this.SetPackParser(NewDefaultParser())
 	this.SetPackDispatcher(this)
 	this.AddPackEventListener("baseserverlistener", this)
-
 	err = this.Init(this.GetConfigJson())
 	if err == nil {
 		this.bInited = true

@@ -21,16 +21,16 @@ func Printf(format string, v ...interface{}) {
 
 //检查输入信号量
 func CheckInput() {
+	fmt.Println("please entry q or Q to quit the progame!")
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		fmt.Println("please entry q or Q to quit the progame!")
+
 		data, _, _ := reader.ReadLine()
 		command := string(data)
 		if command == "q" || command == "Q" {
 			break
 		}
-		time.Sleep(5 * time.Second)
-
+		fmt.Println("please entry q or Q to quit the progame!")
+		time.Sleep(1 * time.Second)
 	}
-
 }
