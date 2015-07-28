@@ -18,7 +18,7 @@ type BaseClient struct {
 	mu                  sync.Mutex
 }
 
-func (this *BaseClient) InitClient(clientname string, serveraddress string, serverport uint16) error {
+func (this *BaseClient) InitClient(dispatcher PackDispatcher, listener PackListener, clientname string, serveraddress string, serverport uint16) error {
 	this.clientName = clientname
 	this.serverListenAddress = serveraddress
 	this.serverListenPort = serverport
@@ -31,9 +31,9 @@ func (this *BaseClient) InitClient(clientname string, serveraddress string, serv
 	}
 	this.SetServerAddress(this.serverListenAddress)
 	this.SetServerPort(this.serverListenPort)
-	this.SetPackDispatcher(NewDefaultPackDispatcher())
+	this.SetPackDispatcher(dispatcher)
 	this.SetPackParser(NewDefaultParser())
-	this.AddPackEventListener("baseclientlistner", this)
+	this.AddPackEventListener("baseclientlistner", listener)
 	if this.serverListenPort <= 0 {
 		return fmt.Errorf("listen port invalid, port = ", this.serverListenPort)
 	}

@@ -1,6 +1,8 @@
 package netio
 
 import (
+	"fmt"
+
 	"github.com/colefan/gsgo/netio/packet"
 )
 
@@ -45,11 +47,11 @@ func (this *DefaultPackDispatcher) DispatchMsg(data []byte, conn ConnInf) {
 }
 
 func (this *DefaultPackDispatcher) SessionOpen(conn ConnInf) {
-
+	fmt.Println("default session open")
 }
 
 func (this *DefaultPackDispatcher) SessionClose(conn ConnInf) {
-
+	fmt.Println("default session close")
 }
 
 func (this *DefaultPackDispatcher) SessionIdle(conn ConnInf) {

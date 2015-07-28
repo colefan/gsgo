@@ -37,7 +37,7 @@ func (n *NodeService) SessionOpen(conn netio.ConnInf) {
 		panic("NodeService.SessionOpen(conn) error, conn is nil")
 	}
 	conn.SetBsStatus(BS_STATUS_OPENED)
-	ProxyLog.Info("NodeService received a session: ", conn.GetRemoteIp())
+	ProxyLog.Info("NodeService received a session: %q", conn.GetRemoteIp())
 
 }
 func (n *NodeService) SessionClose(conn netio.ConnInf) {

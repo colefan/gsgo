@@ -30,10 +30,12 @@ func (this *TcpClientSocket) Connect() error {
 
 	session := NewConnection(conn, this.c)
 	this.conn = session
-	session.Start()
-	this.c.reconnectchan <- false
-
 	this.c.status = SESSION_STATUS_OPEN
+	this.c.GetPackDispatcher().SessionOpen(session)
+	session.Start()
+	this.c.lockreconnect.Lock()
+	this.c.shouldreconnect = false
+	this.c.lockreconnect.Unlock()
 
 	return nil
 }
@@ -42,9 +44,7 @@ func (this *TcpClientSocket) Close() error {
 	if this.c.status != SESSION_STATUS_CLOSED {
 		this.conn.Close()
 		this.c.status = SESSION_STATUS_CLOSED
-		this.c.reconnectchan <- true
-		this.c.reConnCount = 0
-		this.c.StartReconnecting()
+
 	}
 	return nil
 }

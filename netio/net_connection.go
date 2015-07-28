@@ -1,6 +1,7 @@
 package netio
 
 import (
+	"fmt"
 	"net"
 	"sync"
 
@@ -171,12 +172,15 @@ func (this *Connection) Write(data []byte) {
 func (this *Connection) Close() {
 	this.statusMux.Lock()
 	defer this.statusMux.Unlock()
+	fmt.Println("connetion close()")
 	if this.status != SESSION_STATUS_CLOSED {
 		err := this.c.Close()
 		if err != nil {
 			logs.DefaultLogger.Error("connection close error, ", err)
 		}
+
 		this.status = SESSION_STATUS_CLOSED
+		fmt.Println("sessionclose()")
 		this.s.GetPackDispatcher().SessionClose(this)
 	}
 }

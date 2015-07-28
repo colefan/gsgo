@@ -17,7 +17,7 @@ type BaseServer struct {
 }
 
 //初始化服务器
-func (this *BaseServer) InitServer(servername string, ip string, port uint16) (err error) {
+func (this *BaseServer) InitServer(dispatcher PackDispatcher, listener PackListener, servername string, ip string, port uint16) (err error) {
 
 	if this.bInited {
 		return nil
@@ -29,8 +29,8 @@ func (this *BaseServer) InitServer(servername string, ip string, port uint16) (e
 	this.SetListenAddress(ip)
 	this.SetListenPort(port)
 	this.SetPackParser(NewDefaultParser())
-	this.SetPackDispatcher(this)
-	this.AddPackEventListener("baseserverlistener", this)
+	this.SetPackDispatcher(dispatcher)
+	this.AddPackEventListener("baseserverlistener", listener)
 	err = this.Init(this.GetConfigJson())
 	if err == nil {
 		this.bInited = true
