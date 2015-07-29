@@ -13,10 +13,12 @@ import (
 func ListDir(dirpath string, suffix string) (files []string, err error) {
 	files = make([]string, 0, 10)
 	dir, err := ioutil.ReadDir(dirpath)
+
 	if err != nil {
 		return nil, err
 	}
 	pathSep := string(os.PathSeparator)
+	dirpathhassep := strings.HasSuffix(dirpath, pathSep)
 	suffix = strings.ToLower(suffix)
 	for _, f := range dir {
 		if f.IsDir() {
@@ -24,7 +26,12 @@ func ListDir(dirpath string, suffix string) (files []string, err error) {
 		}
 
 		if strings.HasSuffix(strings.ToLower(f.Name()), suffix) {
-			files = append(files, dirpath+pathSep+f.Name())
+			if dirpathhassep {
+				files = append(files, dirpath+f.Name())
+			} else {
+				files = append(files, dirpath+pathSep+f.Name())
+			}
+
 		}
 	}
 	return files, nil
@@ -48,6 +55,7 @@ func WalkDir(dirpath, suffix string) (files []string, err error) {
 }
 
 func MakeFile(dir string, filename string, content string) error {
+	fmt.Println("dir = ", dir, "filename = ", filename)
 	if err := os.Chdir(dir); err != nil {
 		err2 := os.Mkdir(dir, os.ModePerm)
 		if err2 != nil {

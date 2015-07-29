@@ -20,7 +20,7 @@ func GenPacketForGoLang(storepath string, filename string) error {
 	}
 	if strings.LastIndex(storepath, string(os.PathSeparator)) == len(storepath)-1 {
 		//fmt.Println("dddd")
-		err := toolsutils.MakeFile(storepath+root.gopackage, toolsutils.ChFileExt(filename, ".go"), str)
+		err := toolsutils.MakeFile(storepath+root.gopackage, toolsutils.ChFileExt(toolsutils.GetFileName(filename), ".go"), str)
 		if err != nil {
 			return err
 		}
