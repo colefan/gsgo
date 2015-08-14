@@ -33,6 +33,12 @@ func NewMyField() *MyField {
 	return &MyField{}
 }
 
+type MyMsgType struct {
+	name    string
+	value   string
+	comment string
+}
+
 type MyPacket struct {
 	classname string
 	cmdname   string
@@ -261,13 +267,14 @@ func (this *MyPacket) GenGoEntityClass() string {
 type MyRoot struct {
 	xmltype      string
 	keys         []string
+	msgtypes     []*MyMsgType
 	packets      map[string]*MyPacket
 	lastpackname string
 	gopackage    string
 }
 
 func NewMyRoot() *MyRoot {
-	return &MyRoot{packets: make(map[string]*MyPacket), keys: make([]string, 0)}
+	return &MyRoot{packets: make(map[string]*MyPacket), keys: make([]string, 0), msgtypes: make([]*MyMsgType, 0)}
 }
 
 func (this *MyRoot) PutMyPacket(pack *MyPacket) bool {
@@ -279,6 +286,11 @@ func (this *MyRoot) PutMyPacket(pack *MyPacket) bool {
 	this.packets[pack.classname] = pack
 	this.lastpackname = pack.classname
 	this.keys = append(this.keys, pack.classname)
+	return true
+}
+
+func (this *MyRoot) PutMyMsgType(msgtype *MyMsgType) bool {
+	this.msgtypes = append(this.msgtypes, msgtype)
 	return true
 }
 
@@ -300,6 +312,19 @@ func (this *MyRoot) GenGoProtocolFiles() (string, error) {
 	stroutputH = "package " + this.gopackage + "\n"
 	stroutputH += O_BLANK_LINE
 	stroutputH += O_IMPORT_LINES
+	stroutputMsgType := ""
+
+	if len(this.msgtypes) > 0 {
+		stroutputMsgType = "const (\n"
+		for _, mtype := range this.msgtypes {
+			//fmt.Println("msgtype :", mtype)
+			stroutputMsgType += O_TAB + mtype.name + " = " + mtype.value + "\t" + "//" + mtype.comment + "\n"
+		}
+		stroutputMsgType += ")\n"
+		stroutputMsgType += O_BLANK_LINE
+
+	}
+
 	stroutputConst := "const (\n"
 	stroutputPacketContent := ""
 	for _, key := range this.keys {
@@ -321,7 +346,7 @@ func (this *MyRoot) GenGoProtocolFiles() (string, error) {
 	stroutputConst += ")\n"
 	//将文本内容保存的文件中去
 	//TODO
-	str := stroutputH + O_BLANK_LINE + stroutputConst + O_BLANK_LINE + stroutputPacketContent
+	str := stroutputH + O_BLANK_LINE + stroutputMsgType + stroutputConst + O_BLANK_LINE + stroutputPacketContent
 
 	return str, nil
 }
@@ -420,6 +445,23 @@ func GenPacket(filename string) (*MyRoot, error) {
 					return nil, fmt.Errorf("repeat pack in one xml file,pack name = %s", mypack.classname)
 				}
 
+			} else if "msgtype" == strings.ToLower(itemname) {
+				msgtype := &MyMsgType{}
+
+				for _, attr := range token.Attr {
+
+					switch strings.ToLower(attr.Name.Local) {
+					case "cmdname":
+						msgtype.name = attr.Value
+					case "cmdvalue":
+						msgtype.value = attr.Value
+					case "comment":
+						msgtype.comment = attr.Value
+					}
+				}
+				if msgtype.name != "" {
+					myroot.PutMyMsgType(msgtype)
+				}
 			} else {
 				fmt.Println("Unknow xml element in xml,please check:", itemname)
 			}

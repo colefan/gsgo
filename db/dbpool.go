@@ -75,6 +75,11 @@ func (this *DefaultDbPool) createMysqlConnection() (Connection, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = db.Ping()
+	//fmt.Println(this.dbconnstr, err)
+	if err != nil {
+		return nil, err
+	}
 	conn := NewDbConnection(db)
 	conn.SetID(this.getNextConnId())
 	conn.Used(false)

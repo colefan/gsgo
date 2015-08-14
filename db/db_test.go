@@ -7,7 +7,7 @@ import (
 
 func TestDbPool(t *testing.T) {
 	dbpool := NewDefaultDbPool()
-	err := dbpool.InitPool("test", "mysql", "root:@tcp(192.168.16.58:3306)/test", 5)
+	err := dbpool.InitPool("test", "mysql", "root:@tcp(192.168.16.58:3306)/test", 1)
 	if err != nil {
 		t.Fatal(err)
 	}

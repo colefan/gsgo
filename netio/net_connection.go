@@ -47,7 +47,8 @@ type Connection struct {
 	readBuff       *iobuffer.InBuffer //读取缓存区
 	writeBuff      *iobuffer.InBuffer //写入缓冲区
 	writeMux       sync.Mutex
-	statusMux      sync.Mutex //状态值的mutex
+	statusMux      sync.Mutex   //状态值的mutex
+	rwMux          sync.RWMutex //读写mutex
 	status         int
 	id             uint32
 	readMsgs       int
@@ -230,10 +231,14 @@ func (this *Connection) GetRemoteIp() string {
 }
 
 func (this *Connection) BindObj(obj interface{}) {
+	this.rwMux.Lock()
+	defer this.rwMux.Unlock()
 	this.bindObj = obj
 }
 
 func (this *Connection) GetBindObj() interface{} {
+	this.rwMux.RLock()
+	defer this.rwMux.RUnlock()
 	return this.bindObj
 }
 
